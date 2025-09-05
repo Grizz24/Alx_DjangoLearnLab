@@ -35,4 +35,3 @@ def get_librarian_for_library(library_name):
         return librarian.name
     except (Library.DoesNotExist, Librarian.DoesNotExist):
         return None
-
