@@ -1,23 +1,13 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 from django.views.generic import DetailView
-from django.http import HttpResponse
-from .models import Library
+from .models import Book, Library
 
-# Create your views here.
-from .models import Book
 
 def list_books_view(request):
-    """Function-based view to list all books with their authors."""
+    """List all books with their authors using a template."""
     books = Book.objects.all()
-    if not books:
-        return HttpResponse("No books found in the database.")
+    return render(request, "relationship_app/list_books.html", {"books": books})
 
-    # Build a simple text response
-    response_text = "List of Books:\n\n"
-    for book in books:
-        response_text += f"- {book.title} by {book.author.name}\n"
-
-    return HttpResponse(response_text, content_type="text/plain")
 
 class LibraryDetailView(DetailView):
     model = Library
@@ -26,6 +16,6 @@ class LibraryDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        library = self.get_object()  # safer than relying on self.object
+        library = self.get_object()
         context["books"] = Library.books
         return context
