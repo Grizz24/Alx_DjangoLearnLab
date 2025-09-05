@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import DetailView
-from .models import Book, Library
-
+from .models import Book
+from .models import Library
 
 def list_books_view(request):
     """List all books with their authors using a template."""
@@ -19,3 +19,4 @@ class LibraryDetailView(DetailView):
         library = self.get_object()
         context["books"] = Library.books
         return context
+
