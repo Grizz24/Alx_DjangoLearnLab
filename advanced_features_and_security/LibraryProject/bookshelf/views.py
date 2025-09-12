@@ -12,6 +12,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import permission_required
 from .models import Book, Author
 from django import forms
+from django.shortcuts import get_object_or_404, render, redirect
+from django.contrib.auth.decorators import permission_required
+from .models import Book
 
 
 # Register view
@@ -105,26 +108,44 @@ def add_book(request):
         form = BookForm()
     return render(request, "relationship_app/add_book.html", {"form": form})
 
+@permission_required('bookshelf.can_create', raise_exception=True)
+def create_book(request):
+    if request.method == 'POST':
+        form = BookForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('book_list')
+    else:
+        form = BookForm()
+    return render(request, 'bookshelf/book_form.html', {'form': form})
 
-# --- EDIT BOOK ---
-@permission_required("relationship_app.can_change_book", raise_exception=True)
+@permission_required('bookshelf.can_edit', raise_exception=True)
 def edit_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    if request.method == "POST":
+    if request.method == 'POST':
         form = BookForm(request.POST, instance=book)
         if form.is_valid():
             form.save()
-            return redirect("list_books")
+            return redirect('book_list')
     else:
         form = BookForm(instance=book)
-    return render(request, "relationship_app/edit_book.html", {"form": form, "book": book})
+    return render(request, 'bookshelf/book_form.html', {'form': form})
 
-
-# --- DELETE BOOK ---
-@permission_required("relationship_app.can_delete_book", raise_exception=True)
+@permission_required('bookshelf.can_delete', raise_exception=True)
 def delete_book(request, pk):
     book = get_object_or_404(Book, pk=pk)
-    if request.method == "POST":
+    if request.method == 'POST':
         book.delete()
-        return redirect("list_books")
-    return render(request, "relationship_app/delete_book.html", {"book": book})
+        return redirect('book_list')
+    return render(request, 'bookshelf/book_confirm_delete.html', {'book': book})
+
+@permission_required('bookshelf.can_view', raise_exception=True)
+def list_books(request):
+    books = Book.objects.all()
+    return render(request, 'bookshelf/book_list.html', {'books': books})
+
+# Custom permissions for Book model:
+# - can_view: allows reading book entries
+# - can_create: allows creating new book entries
+# - can_edit: allows modifying book entries
+# - can_delete: allows deleting book entries

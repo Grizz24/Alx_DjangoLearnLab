@@ -15,8 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-AUTH_USER_MODEL = "bookshelf.CustomUser"
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -28,6 +26,8 @@ SECRET_KEY = 'django-insecure-x4z@k&&(agitg#-oxm-%i8+9d_v1-8!34un-g=6lxql0)j(i71
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+AUTH_USER_MODEL = "bookshelf.CustomUser"
 
 
 # Application definition
@@ -128,4 +128,3 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
