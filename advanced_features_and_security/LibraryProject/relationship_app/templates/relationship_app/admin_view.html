@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, {{ request.user.username }}. You have full control of the system.</p>
+
+    <ul>
+        <li><a href="{% url 'list_books' %}">Manage Books</a></li>
+        <li><a href="{% url 'library_detail' pk=1 %}">View Libraries</a></li>
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+    </ul>
+</body>
+</html>
