@@ -149,3 +149,16 @@ def list_books(request):
 # - can_create: allows creating new book entries
 # - can_edit: allows modifying book entries
 # - can_delete: allows deleting book entries
+
+
+
+class SearchForm(forms.Form):
+    title = forms.CharField(max_length=100)
+
+def search_books(request):
+    form = SearchForm(request.GET)
+    results = []
+    if form.is_valid():  # cleans & validates input
+        title = form.cleaned_data["title"]
+        results = Book.objects.filter(title__icontains=title)
+    return render(request, "search_results.html", {"form": form, "books": results})

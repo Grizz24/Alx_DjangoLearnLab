@@ -128,3 +128,14 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+INSTALLED_APPS += ["csp"]
+
+MIDDLEWARE += [
+    "csp.middleware.CSPMiddleware",
+]
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")
+CSP_SCRIPT_SRC = ("'self'", "https://cdnjs.cloudflare.com")  # if you load scripts
