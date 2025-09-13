@@ -52,6 +52,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Browser security
+SECURE_BROWSER_XSS_FILTER = True          # Protects against reflected XSS
+X_FRAME_OPTIONS = "DENY"                  # Prevents clickjacking (site can't be embedded in <iframe>)
+SECURE_CONTENT_TYPE_NOSNIFF = True        # Stops browsers from guessing MIME type
+
+# Cookies security (should be True in production with HTTPS)
+CSRF_COOKIE_SECURE = True                 # CSRF cookie only sent over HTTPS
+SESSION_COOKIE_SECURE = True              # Session cookie only sent over HTTPS
+
+
 ROOT_URLCONF = 'myproject.urls'
 
 TEMPLATES = [
@@ -139,3 +149,4 @@ MIDDLEWARE += [
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")
 CSP_SCRIPT_SRC = ("'self'", "https://cdnjs.cloudflare.com")  # if you load scripts
+
