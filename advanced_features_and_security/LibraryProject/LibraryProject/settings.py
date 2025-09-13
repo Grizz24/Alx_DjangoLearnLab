@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'relationship_app',
+    'csp'
 ]
 
 MIDDLEWARE = [
@@ -50,7 +51,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'csp.middleware.CSPMiddleware'
 ]
+
+CSP_DEFAULT_SRC = ("'self'",)
 
 # Browser security
 SECURE_BROWSER_XSS_FILTER = True          # Protects against reflected XSS
@@ -60,6 +64,48 @@ SECURE_CONTENT_TYPE_NOSNIFF = True        # Stops browsers from guessing MIME ty
 # Cookies security (should be True in production with HTTPS)
 CSRF_COOKIE_SECURE = True                 # CSRF cookie only sent over HTTPS
 SESSION_COOKIE_SECURE = True              # Session cookie only sent over HTTPS
+
+
+# Redirect all non-HTTPS requests to HTTPS.
+# IMPORTANT: In development (localhost) you may want this False. Keep True in production.
+SECURE_SSL_REDIRECT = True
+
+# HTTP Strict Transport Security (HSTS)
+# Tells browsers to only use HTTPS for this site for the given number of seconds.
+# 31536000 = 1 year. Only enable long periods after you confirm HTTPS works.
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # include subdomains in HSTS
+SECURE_HSTS_PRELOAD = True            # allow site to be added to browser preload lists
+
+# Cookies: only send cookies (session/csrf) over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# Browser hardening headers
+X_FRAME_OPTIONS = "DENY"              # prevents clickjacking
+SECURE_CONTENT_TYPE_NOSNIFF = True    # prevents MIME sniffing
+SECURE_BROWSER_XSS_FILTER = True      # enables XSS filter in browsers (deprecated in some browsers, but harmless)
+
+# If your Django site is behind a reverse proxy/load balancer (common in production),
+# the proxy typically sets X-Forwarded-Proto header. Tell Django which header to trust:
+# (e.g., when using nginx proxy_pass with proxy_set_header X-Forwarded-Proto $scheme;)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# If you serve on a domain and want CSRF to accept absolute origins:
+# Replace example.com with your real domain(s). Use https://... entries.
+# NOTE: Django >= 4.0 requires scheme in entries.
+CSRF_TRUSTED_ORIGINS = [
+    "https://yourdomain.com",
+    "https://www.yourdomain.com",
+]
+
+# Content Security Policy (optional) — recommended to restrict sources.
+# If you installed django-csp, configure CSP via settings (see docs). Example:
+# CSP_DEFAULT_SRC = ("'self'",)
+# CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")
+# CSP_SCRIPT_SRC = ("'self'", "https://cdnjs.cloudflare.com")
+#
+# If you are not using django-csp, you can set headers manually in middleware or responses.
 
 
 ROOT_URLCONF = 'myproject.urls'
@@ -149,4 +195,3 @@ MIDDLEWARE += [
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'", "https://fonts.googleapis.com")
 CSP_SCRIPT_SRC = ("'self'", "https://cdnjs.cloudflare.com")  # if you load scripts
-

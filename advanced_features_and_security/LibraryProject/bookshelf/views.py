@@ -15,7 +15,7 @@ from django import forms
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import permission_required
 from .models import Book
-from .forms import ExampleForm
+
 
 # Register view
 def register_view(request):
@@ -162,4 +162,3 @@ def search_books(request):
         title = form.cleaned_data["title"]
         results = Book.objects.filter(title__icontains=title)
     return render(request, "search_results.html", {"form": form, "books": results})
-
