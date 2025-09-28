@@ -26,6 +26,5 @@ urlpatterns = [
     path('books/update/', views.BookUpdateView.as_view(), name='book-update'),
     path('books/delete/', views.BookDeleteView.as_view(), name='book-delete'),
     path('api/', include('api.urls')),
+
 ]
-
-
