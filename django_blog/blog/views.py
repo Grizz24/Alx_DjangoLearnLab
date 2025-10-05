@@ -112,6 +112,22 @@ def add_comment(request, post_id):
         form = CommentForm()
     return render(request, 'blog/comment_form.html', {'form': form})
 
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/comment_form.html'
+
+    def form_valid(self, form):
+        # Attach the author and the post automatically before saving
+        form.instance.author = self.request.user
+        post = get_object_or_404(Post, pk=self.kwargs['post_id'])
+        form.instance.post = post
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # Redirect back to the post detail page after comment creation
+        return reverse('post-detail', kwargs={'pk': self.kwargs['post_id']})
+
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
     form_class = CommentForm
@@ -134,3 +150,4 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def get_success_url(self) -> str:
         return reverse('post-detail', kwargs={'pk': self.object.post.pk})
+
