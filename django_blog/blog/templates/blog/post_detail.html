@@ -30,3 +30,10 @@
 {% else %}
 <p><a href="{% url 'login' %}">Login</a> to add a comment.</p>
 {% endif %}
+<p><strong>Tags:</strong>
+  {% for tag in post.tags.all %}
+    <a href="{% url 'posts-by-tag' tag.name %}" class="tag-link">#{{ tag.name }}</a>
+  {% empty %}
+    No tags yet.
+  {% endfor %}
+</p>

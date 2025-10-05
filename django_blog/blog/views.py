@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+from .models import Post, Comment, Tag
 from .forms import PostForm
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -17,7 +17,7 @@ from django.urls import reverse
 from .models import Post, Comment
 from .forms import CommentForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
+from django.db.models import Q
 
 def register_view(request):
     if request.method == 'POST':
@@ -54,6 +54,14 @@ def profile_view(request):
         user.save()
         return redirect('profile')
     return render(request, 'blog/profile.html')
+
+from django.shortcuts import render, get_object_or_404
+
+def posts_by_tag(request, tag_name):
+    tag = get_object_or_404(Tag, name=tag_name)
+    posts = tag.post_set.all()
+    return render(request, 'blog/posts_by_tag.html', {'tag': tag, 'posts': posts})
+
 
 class PostListView(ListView):
     model = Post
@@ -151,3 +159,17 @@ class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def get_success_url(self) -> str:
         return reverse('post-detail', kwargs={'pk': self.object.post.pk})
 
+class SearchResultsView(ListView):
+    model = Post
+    template_name = 'blog/search_results.html'
+    context_object_name = 'posts'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        if query:
+            return Post.objects.filter(
+                Q(title__icontains=query) |
+                Q(content__icontains=query) |
+                Q(tags__name__icontains=query)
+            ).distinct()
+        return Post.objects.none()
