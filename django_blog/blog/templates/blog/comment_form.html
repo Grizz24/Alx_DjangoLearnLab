@@ -1,0 +1,7 @@
+<h3>{% if object %}Edit{% else %}New{% endif %} Comment</h3>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">{% if object %}Update{% else %}Post{% endif %}</button>
+</form>
+<a href="{% if object %}{% url 'post-detail' object.post.pk %}{% else %}#{% endif %}">Cancel</a>
